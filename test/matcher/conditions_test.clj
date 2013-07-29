@@ -2,19 +2,19 @@
   (:require [clojure.test :refer :all]
             [matcher.conditions :refer :all]))
 
-(deftest should_cluster_by_attribute_value_equal
-  (let [testMap {"k1" "v1"}]
+(deftest should-cluster-by-attribute-value-equal
+  (let [test-map {"k1" "v1"}]
     (is 
-      (= [[testMap]] (condition-values-equal "k1" [[testMap]])))
+      (= [[test-map]] (condition-values-equal "k1" [[test-map]])))
     (is 
-      (= [[testMap testMap]] (condition-values-equal "k1" [[testMap testMap]])))
+      (= [[test-map test-map]] (condition-values-equal "k1" [[test-map test-map]])))
     (is 
-      (= [[testMap] [testMap]] (condition-values-equal "k1" [[testMap] [testMap]])))
+      (= [[test-map] [test-map]] (condition-values-equal "k1" [[test-map] [test-map]])))
     (is 
-      (= [[testMap] [{"k1" "v2"}]] (condition-values-equal "k1" [[testMap {"k1" "v2"}]])))
+      (= [[test-map] [{"k1" "v2"}]] (condition-values-equal "k1" [[test-map {"k1" "v2"}]])))
     (is 
-      (= [[testMap]] (condition-values-equal "k1" [[testMap {}]])))
+      (= [[test-map]] (condition-values-equal "k1" [[test-map {}]])))
     (is 
-      (= [] (condition-values-equal "k2" [[testMap]])))
+      (= [] (condition-values-equal "k2" [[test-map]])))
     (is 
-      (= [[{"k2" "v2"}]] (condition-values-equal "k2" [[testMap] [{"k2" "v2"}]])))))
+      (= [[{"k2" "v2"}]] (condition-values-equal "k2" [[test-map] [{"k2" "v2"}]])))))
