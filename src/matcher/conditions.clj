@@ -4,4 +4,4 @@
   (vals (dissoc (group-by #(get % key) records) nil)))
 
 (defn condition-values-equal [key list-of-clusters]
-  (apply concat (map (partial cluster-using-group-by key) list-of-clusters)))
+  (mapcat (partial cluster-using-group-by key) list-of-clusters))
