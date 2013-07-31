@@ -1,5 +1,6 @@
 (ns matcher.loader-test
   (:require [clojure.test :refer :all]
+            [midje.sweet :refer :all]
             [matcher.loader :refer :all]))
 
 (deftest should-read-csv-file
@@ -15,24 +16,37 @@
     (if (not= (.getName file-to-delete) (.getName dir))
       (.delete file-to-delete))))
 
-(deftest should-process-files
-  (let [root (java.io.File. "target/load")
-        input (java.io.File. root "/waiting")
-        processed (java.io.File. root "/processed")
-        failed (java.io.File. root "/failed")
-        test-input-file (java.io.File. input "/test.csv")
-        test-output-file (java.io.File. processed "/test.csv")]
-    (.mkdir root)
-    (.mkdir input)
-    (.mkdir processed)
-    (.mkdir failed)
-    (clean-dir input)
-    (clean-dir processed)
-    (clean-dir failed)
+(def root-dir (java.io.File. "target/load"))
+(def input-dir (java.io.File. root-dir "/waiting"))
+(def processed-dir (java.io.File. root-dir "/processed"))
+(def failed-dir (java.io.File. root-dir "/failed"))
+(def test-input-file (java.io.File. input-dir "/test.csv"))
+(def test-output-file (java.io.File. processed-dir "/test.csv"))
 
-    (spit (.getPath test-input-file) "some\ntext")
+(defn setup-file-processing-test []
+  (do
+    (.mkdir root-dir)
+    (.mkdir input-dir)
+    (.mkdir processed-dir)
+    (.mkdir failed-dir)
+    (clean-dir input-dir)
+    (clean-dir processed-dir)
+    (clean-dir failed-dir)
 
-    (is (.exists test-input-file))
-    (is (not (.exists test-output-file)))
-    (process-files input processed failed #(println %))
-    (is (.exists test-output-file))))
+    (spit (.getPath test-input-file) "some\ntext")))
+
+(defn test-callback [input-file]
+  (println "got in callback: " input-file))
+
+(deftest should-process-files-itest
+  (setup-file-processing-test)
+  (is (.exists test-input-file))
+  (is (not (.exists test-output-file)))
+  (process-files input-dir processed-dir failed-dir test-callback)
+  (is (.exists test-output-file)))
+
+(facts "about `process-files`"
+  (fact "will process only input file from input dir using nested process-file call"
+    (process-files input-dir processed-dir failed-dir test-callback) => nil
+    (provided (matcher.loader/process-file test-input-file test-output-file test-callback) => nil :times 1)
+    (against-background (before :facts (setup-file-processing-test)))))
