@@ -3,17 +3,19 @@
             [matcher.loader :refer :all]))
 
 (deftest should-read-csv-file
-    (is 
+    (is
       (= 4 (count (read-csv "test/resources/loader-records.csv"))))
-    (is 
+    (is
       (= 6 (count (first (read-csv "test/resources/loader-records.csv"))))))
-    (is 
+    (is
       (= ["trade_id" "trade_version" "trade_domain" "amount" "buy_sell" "book"] (first (read-csv "test/resources/loader-records.csv"))))
 
 (defn clean-dir [dir]
-  (map #(.delete (java.io.File. %)) (file-seq dir)))
+  (doseq [file-to-delete (file-seq dir)]
+    (if (not= (.getName file-to-delete) (.getName dir))
+      (.delete file-to-delete))))
 
-(deftest should-process-files 
+(deftest should-process-files
   (let [root (java.io.File. "target/load")
         input (java.io.File. root "/waiting")
         processed (java.io.File. root "/processed")
@@ -27,9 +29,9 @@
     (clean-dir input)
     (clean-dir processed)
     (clean-dir failed)
-    
+
     (spit (.getPath test-input-file) "some\ntext")
-    
+
     (is (.exists test-input-file))
     (is (not (.exists test-output-file)))
     (process-files input processed failed #(println %))
