@@ -1,4 +1,4 @@
-(ns matcher.conditions-midje-test
+(ns matcher.conditions-test
   (:require [midje.sweet :refer :all]
             [matcher.conditions :refer :all]))
 
