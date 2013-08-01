@@ -1,6 +1,7 @@
 (ns matcher.conditions-test
-  (:require [midje.sweet :refer :all]
-            [matcher.conditions :refer :all]))
+  (:require 
+    [midje.sweet :refer :all]
+    [matcher.conditions :refer :all]))
 
 (facts "about `cluster-using-group-by`"
   (fact "will group maps within same vector that have matching value for given key"
