@@ -8,6 +8,8 @@
     (doall
       (csv/read-csv in-file))))
 
+(defn csv-to-records [csv-col]
+  (map (partial zipmap (first csv-col)) (rest csv-col)))
 
 (defn map-to-json [col]
   (json/write-str col))

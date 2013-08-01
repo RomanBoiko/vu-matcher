@@ -11,6 +11,9 @@
     (is
       (= ["trade_id" "amount" "buy_sell"] (first (read-csv "test/resources/loader-records.csv"))))
 
+(deftest should-convert-csv-contents-to-list-of-maps
+  (is (= [{"a" "11" "b" "12"} {"a" "21" "b" "22"}] (csv-to-records [["a" "b"] ["11" "12"] ["21" "22"]])))
+  (is (= [] (csv-to-records [["a" "b"]]))))
 
 (deftest should-serialize-map-to-json
     (is
