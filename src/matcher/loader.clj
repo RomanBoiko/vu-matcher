@@ -1,11 +1,20 @@
 (ns matcher.loader (:gen-class)
   (:require [clojure.data.csv :as csv]
+            [clojure.data.json :as json]
             [clojure.java.io :as io]))
 
 (defn read-csv [file-path]
   (with-open [in-file (io/reader file-path)]
     (doall
       (csv/read-csv in-file))))
+
+
+(defn map-to-json [col]
+  (json/write-str col))
+
+(defn json-to-map [col]
+  (json/read-str col))
+
 
 (defn process-file [input-file output-file fn-process-file]
   (do

@@ -7,9 +7,21 @@
     (is
       (= 4 (count (read-csv "test/resources/loader-records.csv"))))
     (is
-      (= 6 (count (first (read-csv "test/resources/loader-records.csv"))))))
+      (= 3 (count (first (read-csv "test/resources/loader-records.csv"))))))
     (is
-      (= ["trade_id" "trade_version" "trade_domain" "amount" "buy_sell" "book"] (first (read-csv "test/resources/loader-records.csv"))))
+      (= ["trade_id" "amount" "buy_sell"] (first (read-csv "test/resources/loader-records.csv"))))
+
+
+(deftest should-serialize-map-to-json
+    (is
+      (= "{\"a\":1,\"b\":2}" (map-to-json {:a 1 :b 2})))
+    (is
+      (= "{\"a\":1,\"b\":2}" (map-to-json {"a" 1 "b" 2}))))
+
+(deftest should-create-map-from-json
+   (is
+      (= {"a" 1 "b" 2} (json-to-map "{\"a\":1,\"b\":2}"))))
+
 
 (defn clean-dir [dir]
   (doseq [file-to-delete (file-seq dir)]
