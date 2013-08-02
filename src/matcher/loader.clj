@@ -8,7 +8,7 @@
     (doall
       (csv/read-csv in-file))))
 
-(defn csv-to-records [csv-col]
+(defn csv-to-maps [csv-col]
   (map (partial zipmap (first csv-col)) (rest csv-col)))
 
 (defn map-to-json [col]
@@ -17,6 +17,8 @@
 (defn json-to-map [col]
   (json/read-str col))
 
+(defn csv-to-records [csv-file]
+  (map map-to-json (csv-to-maps (read-csv csv-file))))
 
 (defn process-file [input-file output-file fn-process-file]
   (do
