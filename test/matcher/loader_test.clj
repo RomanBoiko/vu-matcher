@@ -59,11 +59,11 @@
   (setup-file-processing-test)
   (is (.exists test-input-file))
   (is (not (.exists test-output-file)))
-  (process-files input-dir processed-dir failed-dir test-callback)
+  (process-files input-dir processed-dir test-callback)
   (is (.exists test-output-file)))
 
 (facts "about `process-files`"
   (fact "will process only input file from input dir using nested process-file call"
-    (process-files input-dir processed-dir failed-dir test-callback) => nil
+    (process-files input-dir processed-dir test-callback) => nil
     (provided (matcher.loader/process-file test-input-file test-output-file test-callback) => nil :times 1)
     (against-background (before :facts (setup-file-processing-test)))))

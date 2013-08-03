@@ -25,7 +25,7 @@
     (.renameTo input-file output-file)
     (fn-process-file output-file)))
 
-(defn process-files [input-dir processed-dir failed-dir fn-process-file]
+(defn process-files [input-dir processed-dir fn-process-file]
   (doseq [input-file (file-seq input-dir)]
      (if (not= (.getName input-file) (.getName input-dir))
        (process-file
