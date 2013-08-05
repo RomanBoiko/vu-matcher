@@ -15,6 +15,7 @@ Commands and links
 
 * REPL: lein repl
 * Run unit tests in REPL: (do (use 'midje.repl) (autotest))
+* Run unit tests in REPL with core test api: (do (use 'matcher.loader-test :reload-all) (run-tests 'matcher.loader-test))
 * Start DB server: ./scripts/couchdb.start.bash
 * DB web-console: http://localhost:5984/\_utils/
 * Create DB: lein dbinstall

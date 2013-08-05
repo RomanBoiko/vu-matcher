@@ -20,3 +20,11 @@
     (println "====>Put records result: " add-result))
   (db/drop-dbs))
 
+(deftest should-add-source
+  (db/drop-dbs)
+  (db/create-dbs)
+  (let [add-result (db/add-source "some-file.txt")]
+    (is (= 32 (count add-result)))
+    (println "====>Put source result: " add-result))
+  (db/drop-dbs))
+

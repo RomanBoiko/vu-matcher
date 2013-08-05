@@ -17,3 +17,6 @@
 
 (defn add-active-records [active-records]
   (couchdb/bulk-update db-active-records active-records))
+
+(defn add-source [source-name]
+  (:_id (couchdb/put-document db-source {:name source-name})))

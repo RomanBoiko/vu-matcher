@@ -1,35 +1,20 @@
 (ns matcher.loader-test
   (:require [clojure.test :refer :all]
-            [midje.sweet :refer :all]
-            [matcher.loader :refer :all]))
+            [matcher.db :as db]
+            [com.ashafa.clutch :as couchdb]
+            [matcher.loader :as loader]))
 
 (deftest should-read-csv-file
     (is
-      (= 4 (count (read-csv "test/resources/loader-records.csv"))))
+      (= 4 (count (loader/read-csv "test/resources/loader-records.csv"))))
     (is
-      (= 3 (count (first (read-csv "test/resources/loader-records.csv"))))))
+      (= 3 (count (first (loader/read-csv "test/resources/loader-records.csv"))))))
     (is
-      (= ["trade_id" "amount" "buy_sell"] (first (read-csv "test/resources/loader-records.csv"))))
+      (= ["trade_id" "amount" "buy_sell"] (first (loader/read-csv "test/resources/loader-records.csv"))))
 
 (deftest should-convert-csv-contents-to-list-of-maps
-  (is (= [{"a" "11" "b" "12"} {"a" "21" "b" "22"}] (csv-to-maps [["a" "b"] ["11" "12"] ["21" "22"]])))
-  (is (= [] (csv-to-maps [["a" "b"]]))))
-
-(deftest should-serialize-map-to-json
-    (is
-      (= "{\"a\":1,\"b\":2}" (map-to-json {:a 1 :b 2})))
-    (is
-      (= "{\"a\":1,\"b\":2}" (map-to-json {"a" 1 "b" 2}))))
-
-(deftest should-create-map-from-json
-   (is
-      (= {"a" 1 "b" 2} (json-to-map "{\"a\":1,\"b\":2}"))))
-
-(deftest should-read-csv-into-list-of-json-records
-  (let [records (csv-to-records "test/resources/loader-records.csv")]
-    (is (= 3 (count records)))
-    (is (= "{\"buy_sell\":\"B\",\"amount\":\"13\",\"trade_id\":\"1324\"}" (first records)))))
-
+  (is (= [{"a" "11" "b" "12"} {"a" "21" "b" "22"}] (loader/csv-to-maps [["a" "b"] ["11" "12"] ["21" "22"]])))
+  (is (= [] (loader/csv-to-maps [["a" "b"]]))))
 
 (defn clean-dir [dir]
   (doseq [file-to-delete (file-seq dir)]
@@ -49,21 +34,23 @@
     (.mkdir processed-dir)
     (clean-dir input-dir)
     (clean-dir processed-dir)
-
-    (spit (.getPath test-input-file) "some\ntext")))
-
-(defn test-callback [input-file]
-  (println "got in callback: " input-file))
+    (clojure.java.io/copy (java.io.File. "test/resources/loader-records.csv") test-input-file)))
 
 (deftest should-process-files-itest
   (setup-file-processing-test)
   (is (.exists test-input-file))
   (is (not (.exists test-output-file)))
-  (process-files input-dir processed-dir test-callback)
+  (loader/process-files input-dir processed-dir #(println "File-callback: " %))
   (is (.exists test-output-file)))
 
-(facts "about `process-files`"
-  (fact "will process only input file from input dir using nested process-file call"
-    (process-files input-dir processed-dir test-callback) => nil
-    (provided (matcher.loader/process-file test-input-file test-output-file test-callback) => nil :times 1)
-    (against-background (before :facts (setup-file-processing-test)))))
+(deftest should-load-records-from-file-to-db-itest
+  (db/drop-dbs)
+  (db/create-dbs)
+  (setup-file-processing-test)
+
+  (loader/perform-load input-dir processed-dir)
+  (is (= 1 (:doc_count (couchdb/database-info db/db-source))))
+  (is (= 3 (:doc_count (couchdb/database-info db/db-active-records))))
+
+  (db/drop-dbs))
+

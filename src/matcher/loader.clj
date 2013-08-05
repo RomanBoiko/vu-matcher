@@ -1,6 +1,6 @@
 (ns matcher.loader (:gen-class)
   (:require [clojure.data.csv :as csv]
-            [clojure.data.json :as json]
+            [matcher.db :as db]
             [clojure.java.io :as io]))
 
 (defn read-csv [file-path]
@@ -11,22 +11,21 @@
 (defn csv-to-maps [csv-col]
   (map (partial zipmap (first csv-col)) (rest csv-col)))
 
-(defn map-to-json [col]
-  (json/write-str col))
-
-(defn json-to-map [col]
-  (json/read-str col))
-
-(defn csv-to-records [csv-file]
-  (map map-to-json (csv-to-maps (read-csv csv-file))))
-
-(defn process-file [input-file output-file fn-process-file]
+(defn move-file [input-file output-file]
   (do
     (.renameTo input-file output-file)
-    (fn-process-file output-file)))
+    output-file))
 
 (defn process-files [input-dir processed-dir fn-process-file]
   (doseq [input-file (file-seq input-dir)]
      (if (not= (.getName input-file) (.getName input-dir))
-       (process-file
-         input-file (io/file processed-dir (.getName input-file)) fn-process-file))))
+       (fn-process-file (move-file input-file (io/file processed-dir (.getName input-file)))))))
+
+(defn add-records-from-csvfile-to-db [csv-file]
+  (let [source-id (db/add-source (.getName csv-file))]
+    (db/add-active-records 
+      (map #(assoc % :source source-id)
+        (csv-to-maps (read-csv csv-file))))))
+
+(defn perform-load [input-dir processed-dir]
+  (process-files input-dir processed-dir add-records-from-csvfile-to-db))
