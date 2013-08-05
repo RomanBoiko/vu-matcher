@@ -1,5 +1,6 @@
 (ns matcher.db
-  (:require [com.ashafa.clutch :as couchdb]))
+  (:require [com.ashafa.clutch :as couchdb])
+  (:gen-class))
 
 (def dburl "http://localhost:5984/")
 
