@@ -7,7 +7,7 @@
 (defn -main [& args]
   (let [input-dir (java.io.File. "waiting")
         processed-dir (java.io.File. "processed")]
-    (matcher.db/create-dbs)
+    (matcher.db/start-db)
     (.mkdir input-dir)
     (.mkdir processed-dir)
     (loop []

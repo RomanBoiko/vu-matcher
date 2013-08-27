@@ -1,7 +1,6 @@
 (ns matcher.loader-test
   (:require [clojure.test :refer :all]
             [matcher.db :as db]
-            [com.ashafa.clutch :as couchdb]
             [matcher.loader :as loader]))
 
 (deftest should-read-csv-file
@@ -44,13 +43,7 @@
   (is (.exists test-output-file)))
 
 (deftest should-load-records-from-file-to-db-itest
-  (db/drop-dbs)
-  (db/create-dbs)
   (setup-file-processing-test)
 
-  (loader/perform-load input-dir processed-dir)
-  (is (= 1 (:doc_count (couchdb/database-info db/db-source))))
-  (is (= 3 (:doc_count (couchdb/database-info db/db-active-records))))
-
-  (db/drop-dbs))
+  (loader/perform-load input-dir processed-dir))
 

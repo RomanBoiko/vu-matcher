@@ -3,10 +3,8 @@
   :dependencies [
     [org.clojure/clojure "1.5.1"]
     [org.clojure/data.csv "0.1.2"]
-    [com.ashafa/clutch "0.4.0-RC1"]
-    [fleetdb-client "0.2.2"]
-    [fleetdb "0.3.1"]]
+    [clj-orient "0.5.0"]]
   :main matcher.bootstrap
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
-  :aliases {"dbinstall" ["run" "-m" "matcher.dbinstall"]})
+  :aliases {"boot" ["run" "-m" "matcher.bootstrap"]})
 
