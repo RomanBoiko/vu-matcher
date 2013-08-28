@@ -1,4 +1,4 @@
-(ns matcher.conditions (:gen-class))
+(ns matcher.conditions)
 
 (defn cluster-using-group-by [key records]
   (vals (dissoc (group-by #(get % key) records) nil)))

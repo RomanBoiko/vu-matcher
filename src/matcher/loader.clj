@@ -1,4 +1,4 @@
-(ns matcher.loader (:gen-class)
+(ns matcher.loader
   (:require [clojure.data.csv :as csv]
             [matcher.db :as db]
             [clojure.java.io :as io]))

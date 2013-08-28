@@ -44,6 +44,10 @@
 
 (deftest should-load-records-from-file-to-db-itest
   (setup-file-processing-test)
-
-  (loader/perform-load input-dir processed-dir))
+  (db/start-db)
+  (db/clean-db)
+  (loader/perform-load input-dir processed-dir)
+  (is (= 1 (count (db/all-sources))))
+  (is (= 3 (count (db/all-active-records))))
+  (db/stop-db))
 
