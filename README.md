@@ -20,5 +20,6 @@ Dev commands and links
 Startup
 -------
 
-* Deploy db: ./scripts/db.sh
-* Start matcher: ./scripts/matcher.sh
+* Deploy db: ./scripts/db.deploy.sh
+* Start matcher: ./scripts/matcher.start.sh
+* Stop matcher: ./scripts/matcher.stop.sh
