@@ -26,12 +26,11 @@
      (compojure.core/GET "/main" [] (main-page))
 ;     (GET "/full-name/:first/:second" [first second] (full-name first second)) ; GET request with variable URL
 ;     (GET "/full-name" [first second] (full-name first second)) ; GET request with request params
-;     (POST "/post-name" [first-name second-name] (post-name first-name second-name)) ; POST request with form data
      (compojure.route/not-found "<h1>Page not found</h1>"))
 
 (def web-config
   (-> #'web-routes
-    (handler/api)  ; to access the form data in the parameter style way in the route definitions
+    (handler/api)
     (ring.middleware.file/wrap-file "web")
     (ring.middleware.reload/wrap-reload '(matcher.web))
     (ring.middleware.stacktrace/wrap-stacktrace)))

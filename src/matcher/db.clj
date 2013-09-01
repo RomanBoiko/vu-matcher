@@ -3,9 +3,6 @@
             [clj-orient.query :as oq]
             [taoensso.timbre :as log]))
 
-(defn create-db []
-  (oc/create-db! "local:/tmp/matcherdb"))
-
 (defn start-db []
   (do
     (log/info "starting db...")
@@ -37,3 +34,12 @@
       (oc/delete! record))
     (doseq [source (all-sources)]
       (oc/delete! source))))
+
+(defn create-db []
+  (do
+    (oc/create-db! "local:/tmp/matcherdb")
+    (start-db)
+    (add-active-records [{}])
+    (add-source "")
+    (clean-db)
+    (stop-db)))

@@ -3,6 +3,7 @@
     [matcher.loader :as loader]
     [matcher.db :as db]
     [matcher.web :as web]
+    [matcher.matching :as matching]
     [taoensso.timbre :as log])
   (:gen-class :main true))
 
@@ -11,6 +12,7 @@
         processed-dir (java.io.File. "processed")]
     (db/start-db)
     (web/start-web-server)
+    (matching/start-matching)
     (.mkdir input-dir)
     (.mkdir processed-dir)
     (loop []
