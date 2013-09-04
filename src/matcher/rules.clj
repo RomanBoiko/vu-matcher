@@ -15,5 +15,12 @@
       (number-of-records-in-group-is 2))})
 
 (defn ruleset [rules active-records]
-  ;not implemented yet
-  )
+  (loop [records-to-match [active-records]
+         matched-groups []
+         rules-to-run rules]
+    (if (or (empty? rules-to-run) (empty? records-to-match))
+        matched-groups
+        (let [rule-result ((first rules-to-run) records-to-match)
+              non-matched-records (remove (set (flatten (vals rule-result))) (flatten records-to-match))]
+          (recur [non-matched-records] (conj matched-groups rule-result) (rest rules-to-run))))))
+
