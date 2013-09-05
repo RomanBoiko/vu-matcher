@@ -1,41 +1,26 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-  "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML>
 <html>
   <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Matcher</title>
-    <link href="datatables/demo_table_jui.css" rel="stylesheet" type="text/css"/>
-    <link href="datatables/jquery-ui-1.7.2.custom.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="datatables/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="js/app.js"></script>
+    <link rel="stylesheet" href="css/slick.grid.css" type="text/css"/>
+    <link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css" type="text/css"/>
+    <link rel="stylesheet" href="css/examples.css" type="text/css"/>
+
+    <script src="js/jquery-1.7.min.js"></script>
+    <script src="js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script src="js/jquery.event.drag-2.2.js"></script>
+
+    <script src="js/slick.core.js"></script>
+    <script src="js/slick.editors.js"></script>
+    <script src="js/slick.formatters.js"></script>
+    <script src="js/slick.grid.js"></script>
+    <script src="js/slick.cellrangedecorator.js"></script>
+    <script src="js/slick.cellrangeselector.js"></script>
+    <script src="js/slick.cellselectionmodel.js"></script>
+    <script src="js/app.js"></script>
   </head>
   <body>
-    <div class="full_width">
-
-      <table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
-        <thead>
-          <tr>
-            <th width="20%">Rendering engine</th>
-            <th width="25%">Browser</th>
-            <th width="25%">Platform(s)</th>
-            <th width="15%">Engine version</th>
-            <th width="15%">CSS grade</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Rendering engine</th>
-            <th>Browser</th>
-            <th>Platform(s)</th>
-            <th>Engine version</th>
-            <th>CSS grade</th>
-          </tr>
-        </tfoot>
-      </table>
-
-    </div>
+    <div id="activeRecordsGrid" style="width:600px;height:500px;"></div>
   </body>
 </html>
