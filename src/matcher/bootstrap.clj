@@ -17,6 +17,6 @@
     (.mkdir processed-dir)
     (loop []
       (Thread/sleep 2000)
-      (log/info "Looking up to load dir...")
+      (log/debug "Looking up to load dir...")
       (loader/perform-load input-dir processed-dir)
       (recur))))

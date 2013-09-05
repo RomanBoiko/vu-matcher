@@ -19,8 +19,9 @@
 
 (defn matching-process [agent-state]
   (loop []
-    (log/info "matching started")
-    (log/info "matching finished, " (with-out-str (time (match-active-records))))
+    (log/debug "matching started")
+    (match-active-records)
+    (log/debug "matching finished")
     (Thread/sleep 5000)
     (recur)))
 

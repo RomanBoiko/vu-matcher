@@ -1,6 +1,7 @@
 (ns matcher.loader
   (:require [clojure.data.csv :as csv]
             [matcher.db :as db]
+            [taoensso.timbre :as log]
             [clojure.java.io :as io]))
 
 (defn read-csv [file-path]
@@ -13,6 +14,7 @@
 
 (defn move-file [input-file output-file]
   (do
+    (log/info (str "moving incoming " input-file " into " output-file))
     (.renameTo input-file output-file)
     output-file))
 
@@ -22,10 +24,12 @@
        (fn-process-file (move-file input-file (io/file processed-dir (.getName input-file)))))))
 
 (defn add-records-from-csvfile-to-db [csv-file]
-  (let [source-id (db/add-source (.getName csv-file))]
-    (db/add-active-records 
-      (map #(assoc % :source source-id)
-        (csv-to-maps (read-csv csv-file))))))
+  (let [source-id (db/add-source (.getName csv-file))
+        records (csv-to-maps (read-csv csv-file))]
+    (log/info (str "source " (.getName csv-file) " created in db,"
+                   "loading " (count records) " records from it"))
+    (db/add-active-records
+      (map #(assoc % :source source-id) records))))
 
 (defn perform-load [input-dir processed-dir]
   (process-files input-dir processed-dir add-records-from-csvfile-to-db))
