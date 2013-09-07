@@ -3,11 +3,6 @@
             [matcher.db :as db]
             [matcher.rules :refer :all]))
 
-(defn err-handler-fn [ag ex]
-    (log/error (str "error occured in matching agent " ag": " ex)))
-
-(def matching-agent (agent 0 :error-handler err-handler-fn))
-
 (defn match-active-records []
   (let [active-records (db/all-active-records)
         match-results (ruleset [perfect-match-demo-rule suggested-match-demo-rule] active-records)]
@@ -25,5 +20,8 @@
     (Thread/sleep 5000)
     (recur)))
 
+(defn err-handler-fn [ag ex]
+    (log/error (str "error occured in matching agent " ag": " ex)))
+
 (defn start-matching []
-  (send matching-agent matching-process))
+  (send (agent 0 :error-handler err-handler-fn) matching-process))

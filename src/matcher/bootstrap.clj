@@ -8,15 +8,11 @@
   (:gen-class :main true))
 
 (defn -main [& args]
-  (let [input-dir (java.io.File. "waiting")
-        processed-dir (java.io.File. "processed")]
+  (do
     (db/start-db)
     (web/start-web-server)
     (matching/start-matching)
-    (.mkdir input-dir)
-    (.mkdir processed-dir)
+    (loader/start-loading)
     (loop []
-      (Thread/sleep 2000)
-      (log/debug "Looking up to load dir...")
-      (loader/perform-load input-dir processed-dir)
+      (Thread/sleep 5000)
       (recur))))

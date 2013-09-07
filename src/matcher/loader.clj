@@ -4,6 +4,9 @@
             [taoensso.timbre :as log]
             [clojure.java.io :as io]))
 
+(def input-dir (java.io.File. "waiting"))
+(def processed-dir (java.io.File. "processed"))
+
 (defn read-csv [file-path]
   (with-open [in-file (io/reader file-path)]
     (doall
@@ -33,3 +36,19 @@
 
 (defn perform-load [input-dir processed-dir]
   (process-files input-dir processed-dir add-records-from-csvfile-to-db))
+
+(defn loading-process [agent-state]
+  (loop []
+    (Thread/sleep 2000)
+    (log/debug "Looking up to load dir...")
+    (perform-load input-dir processed-dir)
+    (recur)))
+
+(defn err-handler-fn [ag ex]
+    (log/error (str "error occured in loading agent " ag": " ex)))
+
+(defn start-loading []
+  (do
+    (.mkdir input-dir)
+    (.mkdir processed-dir)
+    (send (agent 0 :error-handler err-handler-fn) loading-process)))
