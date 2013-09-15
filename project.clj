@@ -11,7 +11,7 @@
     [hiccup "1.0.4"]
     [clj-orient "0.5.0"]]
   :main matcher.bootstrap
-  :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
+  :profiles {:dev {:dependencies [[org.clojars.echo/test.mock "0.1.2"]]}}
   :aliases {"boot" ["run" "-m" "matcher.bootstrap"]
             "dbdeploy" ["run" "-m" "matcher.db/create-db"]})
 
