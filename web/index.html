@@ -10,9 +10,11 @@
     <script src="js/jquery-1.7.min.js"></script>
     <script src="js/jquery-ui-1.8.16.custom.min.js"></script>
     <script src="js/jquery.event.drag-2.2.js"></script>
+    <script src="js/jquery.jsonp-2.4.min.js"></script>
 
     <script src="js/slick.core.js"></script>
     <script src="js/slick.editors.js"></script>
+    <script src="js/slick.remotemodel.js"></script>
     <script src="js/slick.formatters.js"></script>
     <script src="js/slick.grid.js"></script>
     <script src="js/slick.cellrangedecorator.js"></script>
@@ -21,6 +23,16 @@
     <script src="js/app.js"></script>
   </head>
   <body>
-    <div id="activeRecordsGrid" style="width:600px;height:500px;"></div>
+    <div style="width:700px;float:left;">
+      <div class="grid-header" style="width:100%">
+        <label>Hackernews stories</label>
+            <span style="float:right;display:inline-block;">
+              Search:
+              <input type="text" id="txtSearch" value="github">
+            </span>
+      </div>
+      <div id="activeRecordsGrid" style="width:100%;height:600px;"></div>
+      <div id="pager" style="width:100%;height:20px;"></div>
+    </div>
   </body>
 </html>

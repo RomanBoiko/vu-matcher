@@ -1,53 +1,89 @@
-function requiredFieldValidator(value) {
-  if (value == null || value == undefined || !value.length) {
-    return {valid: false, msg: "This is a required field"};
-  } else {
-    return {valid: true, msg: null};
-  }
-}
-
 var grid;
-var data = [];
-var columns = [
-  {id: "title", name: "Title", field: "title", width: 120, cssClass: "cell-title", editor: Slick.Editors.Text, validator: requiredFieldValidator},
-  {id: "desc", name: "Description", field: "description", width: 100, editor: Slick.Editors.LongText},
-  {id: "duration", name: "Duration", field: "duration", editor: Slick.Editors.Text},
-  {id: "%", name: "% Complete", field: "percentComplete", width: 80, resizable: false, formatter: Slick.Formatters.PercentCompleteBar, editor: Slick.Editors.PercentComplete},
-  {id: "start", name: "Start", field: "start", minWidth: 60, editor: Slick.Editors.Date},
-  {id: "finish", name: "Finish", field: "finish", minWidth: 60, editor: Slick.Editors.Date},
-  {id: "effort-driven", name: "Effort Driven", width: 80, minWidth: 20, maxWidth: 80, cssClass: "cell-effort-driven", field: "effortDriven", formatter: Slick.Formatters.Checkmark, editor: Slick.Editors.Checkbox}
-];
-var options = {
-  editable: true,
-  enableAddRow: true,
-  enableCellNavigation: true,
-  asyncEditorLoading: false,
-  autoEdit: false
+var loader = new Slick.Data.RemoteModel();
+
+var storyTitleFormatter = function (row, cell, value, columnDef, dataContext) {
+  s ="<b><a href='" + dataContext["url"] + "' target=_blank>" +
+            dataContext["title"] + "</a></b><br/>";
+  desc = dataContext["text"];
+  if (desc) { // on Hackernews many stories don't have a description
+      s += desc;
+  }
+  return s;
 };
 
+var dateFormatter = function (row, cell, value, columnDef, dataContext) {
+  return (value.getMonth()+1) + "/" + value.getDate() + "/" + value.getFullYear();
+};
+
+
+var columns = [
+  {id: "num", name: "#", field: "index", width: 40},
+  {id: "story", name: "Story", width: 520, formatter: storyTitleFormatter, cssClass: "cell-story"},
+  {id: "date", name: "Date", field: "create_ts", width: 60, formatter: dateFormatter, sortable: true},
+  {id: "points", name: "Points", field: "points", width: 60, sortable: true}
+];
+
+var options = {
+  rowHeight: 64,
+  editable: false,
+  enableAddRow: false,
+  enableCellNavigation: false
+};
+
+var loadingIndicator = null;
+
+
 $(function () {
-  for (var i = 0; i < 500; i++) {
-    var d = (data[i] = {});
+  grid = new Slick.Grid("#activeRecordsGrid", loader.data, columns, options);
 
-    d["title"] = "Task " + i;
-    d["description"] = "This is a sample task description.\n  It can be multiline";
-    d["duration"] = "5 days";
-    d["percentComplete"] = Math.round(Math.random() * 100);
-    d["start"] = "01/01/2009";
-    d["finish"] = "01/05/2009";
-    d["effortDriven"] = (i % 5 == 0);
-  }
+  grid.onViewportChanged.subscribe(function (e, args) {
+    var vp = grid.getViewport();
+    loader.ensureData(vp.top, vp.bottom);
+  });
 
-  grid = new Slick.Grid("#activeRecordsGrid", data, columns, options);
+  grid.onSort.subscribe(function (e, args) {
+    loader.setSort(args.sortCol.field, args.sortAsc ? 1 : -1);
+    var vp = grid.getViewport();
+    loader.ensureData(vp.top, vp.bottom);
+  });
 
-  grid.setSelectionModel(new Slick.CellSelectionModel());
+  loader.onDataLoading.subscribe(function () {
+    if (!loadingIndicator) {
+      loadingIndicator = $("<span class='loading-indicator'><label>Buffering...</label></span>").appendTo(document.body);
+      var $g = $("#activeRecordsGrid");
 
-  grid.onAddNewRow.subscribe(function (e, args) {
-    var item = args.item;
-    grid.invalidateRow(data.length);
-    data.push(item);
+      loadingIndicator
+          .css("position", "absolute")
+          .css("top", $g.position().top + $g.height() / 2 - loadingIndicator.height() / 2)
+          .css("left", $g.position().left + $g.width() / 2 - loadingIndicator.width() / 2);
+    }
+
+    loadingIndicator.show();
+  });
+
+  loader.onDataLoaded.subscribe(function (e, args) {
+    for (var i = args.from; i <= args.to; i++) {
+      grid.invalidateRow(i);
+    }
+
     grid.updateRowCount();
     grid.render();
-  });
-})
 
+    loadingIndicator.fadeOut();
+  });
+
+  $("#txtSearch").keyup(function (e) {
+    if (e.which == 13) {
+      loader.setSearch($(this).val());
+      var vp = grid.getViewport();
+      loader.ensureData(vp.top, vp.bottom);
+    }
+  });
+
+  loader.setSearch($("#txtSearch").val());
+  loader.setSort("create_ts", -1);
+  grid.setSortColumn("date", false);
+
+  // load the first page
+  grid.onViewportChanged.notify();
+})
